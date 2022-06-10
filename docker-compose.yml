@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: '.'
+      dockerfile: 'node.Dockerfile'
+    ports:
+      - '3000:3000'
+    command: 'yarn nest start --watch'
+    environment:
+      FAKETIME: '2022-06-15 16:00:00'
+      FAKETIME_DONT_FAKE_MONOTONIC: '1'
+      LD_PRELOAD: '/usr/local/lib/faketime/libfaketime.so.1'
+      TZ: 'Europe/Warsaw'
+    user: 'node'
+    volumes:
+      - './:/app'
+    working_dir: '/app'
+  database:
+    build:
+      context: '.'
+      dockerfile: 'postgres.Dockerfile'
+    ports:
+      - '5432:5432'
+    command: 'postgres'
+    user: 'postgres'
+    environment:
+      FAKETIME: '2022-06-15 16:00:00'
+      FAKETIME_DONT_FAKE_MONOTONIC: '1'
+      LD_PRELOAD: '/usr/local/lib/faketime/libfaketime.so.1'
+      POSTGRES_DB: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_USER: 'postgres'
+      TZ: 'Europe/Warsaw'
