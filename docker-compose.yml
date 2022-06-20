@@ -9,8 +9,10 @@ services:
       - '3000:3000'
     command: 'yarn nest start --watch'
     environment:
-      FAKETIME_FOLLOW_FILE: '/home/node/.faketimerc'
       FAKETIME_DONT_FAKE_MONOTONIC: '1'
+      FAKETIME_FOLLOW_FILE: '/home/node/.faketimerc'
+      FAKETIME_NO_CACHE: '1'
+      FAKETIME_UPDATE_TIMESTAMP_FILE: '1'
       LD_PRELOAD: '/usr/local/lib/faketime/libfaketime.so.1'
       TZ: 'Europe/Warsaw'
     user: 'node'

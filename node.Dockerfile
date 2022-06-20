@@ -17,7 +17,8 @@ RUN mkdir /home/node/app
 
 # The libfaketime library allows you to use a file named `.faketimerc` to dynamically change the time at runtime.
 # I have to create this file manually.
-RUN touch /home/node/.faketimerc
+#RUN touch /home/node/.faketimerc
+RUN echo "2022-06-15 14:00:00" > /home/node/.faketimerc
 
 # The default owner of the file is `root` by which it cannot be edited in the docker container.
 # Here I change the file owner so that I can edit the file from within e.g. Node.js, terminal.
