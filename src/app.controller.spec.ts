@@ -5,45 +5,30 @@ import * as supertest from 'supertest'
 import * as fs from 'node:fs'
 import { redisClient, service } from './app.controller'
 
-describe('Mocking dates', () => {
-  let app: INestApplication
+let app: INestApplication
 
-  beforeAll(async () => {
-    const testingModule: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
+beforeAll(async () => {
+  const testingModule: TestingModule = await Test.createTestingModule({
+    imports: [AppModule],
+  }).compile()
 
-    app = testingModule.createNestApplication()
-    await app.init()
-  })
+  app = testingModule.createNestApplication()
+  await app.init()
+})
 
-  afterAll(async () => {
-    await redisClient.flushDb() // Clear all cached data.
-    await app.close()
-    fs.writeFileSync('./redis.faketimerc', '2022-06-15 14:00:00') // Restore the default time that Redis server sees.
-  })
+afterEach(() => {
+  fs.writeFileSync('/home/node/.faketimerc', '2022-06-15 12:00:00') // Restore the default time that Node.js server sees.
+})
 
-  beforeEach(() => {
-    fs.writeFileSync('/home/node/.faketimerc', '2022-06-15 12:00:00')
-  })
+afterAll(async () => {
+  fs.writeFileSync('./redis.faketimerc', '2022-06-15 14:00:00') // Restore the default time that Redis server sees.
+  fs.writeFileSync('/home/node/.faketimerc', '2022-06-15 12:00:00') // Restore the default time that Node.js server sees.
+  await redisClient.flushDb() // Clear all cached data.
+  await app.close()
+})
 
-  afterEach(() => {
-    fs.writeFileSync('/home/node/.faketimerc', '2022-06-15 12:00:00')
-  })
-
-  it('should get static date from nodejs runtime', async () => {
-    const response = await supertest(app.getHttpServer()).get('/get-date-from-nodejs')
-
-    expect(response.body).toEqual({ iso: '2022-06-15T10:00:00.000Z' })
-  })
-
-  it('should get static date from database', async () => {
-    const response = await supertest(app.getHttpServer()).get('/get-date-from-database')
-
-    expect(response.body).toEqual({ iso: '2022-06-15T14:00:00.000Z' })
-  })
-
-  it('should get updated date from nodejs runtime', async () => {
+describe('Mock dates in Node.js', () => {
+  it('should return static date from nodejs runtime', async () => {
     const response = await supertest(app.getHttpServer()).get('/get-date-from-nodejs')
 
     expect(response.body).toEqual({ iso: '2022-06-15T10:00:00.000Z' })
@@ -56,8 +41,18 @@ describe('Mocking dates', () => {
 
     expect(responseAfterDateUpdate.body).toEqual({ iso: '2022-06-19T14:00:00.000Z' })
   })
+})
 
-  it('should check if cached is properly cleared and setup', async () => {
+describe('Mock dates in PostgreSQL', () => {
+  it('should return static date from PostgreSQL database', async () => {
+    const response = await supertest(app.getHttpServer()).get('/get-date-from-database')
+
+    expect(response.body).toEqual({ iso: '2022-06-15T14:00:00.000Z' })
+  })
+})
+
+describe('Mock dates in Redis', () => {
+  it('should check if cache is properly cleared and setup', async () => {
     const performExpensiveOperationSpy = jest.spyOn(service, 'performExpensiveOperation')
 
     /**
