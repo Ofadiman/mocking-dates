@@ -14,7 +14,6 @@ services:
       FAKETIME_NO_CACHE: '1'
       FAKETIME_UPDATE_TIMESTAMP_FILE: '1'
       LD_PRELOAD: '/usr/local/lib/faketime/libfaketime.so.1'
-      TZ: 'Europe/Warsaw'
     user: 'node'
     volumes:
       - './:/home/node/app'
@@ -34,7 +33,6 @@ services:
       POSTGRES_DB: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_USER: 'postgres'
-      TZ: 'Europe/Warsaw'
   cache:
     build:
       context: '.'
@@ -51,4 +49,3 @@ services:
       FAKETIME_NO_CACHE: '1'
       FAKETIME_UPDATE_TIMESTAMP_FILE: '1'
       LD_PRELOAD: '/usr/local/lib/faketime/libfaketime.so.1'
-      TZ: 'Europe/Warsaw'

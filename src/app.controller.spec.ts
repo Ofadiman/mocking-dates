@@ -31,7 +31,7 @@ describe('Mock dates in Node.js', () => {
   it('should return static date from nodejs runtime', async () => {
     const response = await supertest(app.getHttpServer()).get('/get-date-from-nodejs')
 
-    expect(response.body).toEqual({ iso: '2022-06-15T10:00:00.000Z' })
+    expect(response.body).toEqual({ iso: '2022-06-15T12:00:00.000Z' })
 
     fs.writeFileSync('/home/node/.faketimerc', '2022-06-19 16:00:00')
 
@@ -39,7 +39,7 @@ describe('Mock dates in Node.js', () => {
       '/get-date-from-nodejs',
     )
 
-    expect(responseAfterDateUpdate.body).toEqual({ iso: '2022-06-19T14:00:00.000Z' })
+    expect(responseAfterDateUpdate.body).toEqual({ iso: '2022-06-19T16:00:00.000Z' })
   })
 })
 
@@ -47,7 +47,7 @@ describe('Mock dates in PostgreSQL', () => {
   it('should return static date from PostgreSQL database', async () => {
     const response = await supertest(app.getHttpServer()).get('/get-date-from-database')
 
-    expect(response.body).toEqual({ iso: '2022-06-15T14:00:00.000Z' })
+    expect(response.body).toEqual({ iso: '2022-06-15T16:00:00.000Z' })
   })
 })
 
